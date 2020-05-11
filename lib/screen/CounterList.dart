@@ -27,49 +27,50 @@ class _CounterListState extends State<CounterList> {
         builder: (context, snapshot) =>
             snapshot.connectionState == ConnectionState.waiting
                 ? circularProgress()
-                : ListView.builder(
-                    itemCount: dhikr.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          child: Text(dhikr[index].count.toString()),
-                        ),
-                        title: Text(dhikr[index].title),
-                        subtitle: Row(
-                          children: <Widget>[
-                            Text(dhikr[index].date),
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Text(dhikr[index].time),
-                          ],
-                        ),
-                        trailing: PopupMenuButton(
-                          onSelected: (Goto selectedValue) {
-                            if (selectedValue == Goto.Continue) {
-                              Navigator.of(context).pushNamed('/',
-                                  arguments: dhikr[index].count);
-                            } else {
-                              setState(() {
-                                Provider.of<ListOfDhikr>(context)
-                                    .removeDhikr(dhikr[index].id);
-                              });
-                            }
-                          },
-                          icon: Icon(Icons.menu),
-                          itemBuilder: (_) => [
-                            PopupMenuItem(
-                              child: Text('Continue'),
-                              value: Goto.Continue,
-                            ),
-                            PopupMenuItem(
-                              child: Text('Remove'),
-                              value: Goto.Remove,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                : Consumer<ListOfDhikr>(
+                    builder: (context, ls, ch) => ListView.builder(
+                      itemCount:ListOfDhikr.items.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: CircleAvatar(
+                            child: Text(dhikr[index].count.toString()),
+                          ),
+                          title: Text(dhikr[index].title),
+                          subtitle: Row(
+                            children: <Widget>[
+                              Text(dhikr[index].date),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Text(dhikr[index].time),
+                            ],
+                          ),
+                          trailing: PopupMenuButton(
+                            onSelected: (Goto selectedValue) {
+                              if (selectedValue == Goto.Continue) {
+                                Navigator.of(context).pushNamed('/',
+                                    arguments: dhikr[index].count);
+                              } else {
+                                setState(() {
+                                  ls.removeDhikr(dhikr[index].id);
+                                });
+                              }
+                            },
+                            icon: Icon(Icons.menu),
+                            itemBuilder: (_) => [
+                              PopupMenuItem(
+                                child: Text('Continue'),
+                                value: Goto.Continue,
+                              ),
+                              PopupMenuItem(
+                                child: Text('Remove'),
+                                value: Goto.Remove,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
       ),
     );

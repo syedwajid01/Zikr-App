@@ -15,7 +15,7 @@ class ListOfDhikr with ChangeNotifier {
   static List<Dhikr> items = [];
 
   addDhikr({String title, String date, String time, int count}) {
-    String id = DateTime.now().toString();
+    String id =DateTime.now().toString();
     DBHelper.insert(table, {
       'title': title,
       'id': id,

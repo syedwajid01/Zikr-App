@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:vibration/vibration.dart';
 import 'package:zikr_app/model/Dhikr.dart';
 import 'package:zikr_app/screen/CounterList.dart';
 import 'package:zikr_app/widgets/Counter.dart';
-import 'package:vibrate/vibrate.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -24,18 +24,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      percentage = 0.0;
-      counter = 0;
-    });
-    percentageAnimationController = new AnimationController(
-        vsync: this, duration: new Duration(milliseconds: 1000))
-      ..addListener(() {
+    Future.delayed(Duration.zero, () {
+      int counter2 = ModalRoute.of(context).settings.arguments;
+      if (counter2 != null) {
         setState(() {
-          percentage = lerpDouble(
-              percentage, newPercentage, percentageAnimationController.value);
+          percentage = 0.0;
+          counter = counter2;
         });
-      });
+      } else {
+        setState(() {
+          percentage = 0.0;
+          counter = 0;
+        });
+      }
+    });
+
+    percentageAnimationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1000))
+          ..addListener(() {
+            setState(() {
+              percentage = lerpDouble(percentage, newPercentage,
+                  percentageAnimationController.value);
+            });
+          });
   }
 
   void _showDialog() {
@@ -74,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                   Fluttertoast.showToast(
                       msg: 'Dhikr Added to list', gravity: ToastGravity.TOP);
-
                   setState(() {
                     _textFieldController1.text = "";
                   });
@@ -193,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            if (shouldVibrate) Vibrate.vibrate();
+                            if (shouldVibrate) Vibration.vibrate(duration: 500);
                             counter++;
                             percentage = newPercentage;
                             newPercentage += 10;
@@ -221,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     "$counter",
                                     style: TextStyle(
                                       color: Colors.yellow,
-                                     // fontFamily: "digital",
+                                      fontFamily: "digital",
                                       fontSize: 8,
                                     ),
                                   ),
